@@ -1,0 +1,90 @@
+# XML-Parsing-for-Google-USPTO-patent-files-using-R
+filenames<-readLines('C:/Users/agn23/Desktop/actual_path.txt')
+setwd('C:/Users/agn23/Downloads/Patent Data/Patent bibliography/2015') 
+library(XML)
+
+lines   <- readLines(paste(filenames[1],".xml",sep="")) 
+
+start   <- grep('<?xml version="1.0" encoding="UTF-8"?>',lines,fixed=T) 
+end     <- c(start[-1]-1,length(lines))                                 
+checkorgname <- grep('<assignees>', lines, fixed=T)                     
+
+
+
+data<-data.frame(start, end)
+
+num=c();
+for(i in 1:length(checkorgname)){                                           
+  for(j in 1:length(start)){                                           
+    if(checkorgname[i]>start[j] && checkorgname[i]<end[j]){     
+      num=append(num, j)                                  
+    }                                                         
+  }
+}
+
+
+get.xml <- function(i) {                                       
+  txt <- paste(lines[start[i]:end[i]],collapse="\n")       
+  xmlParse(txt,asText=T,useInternalNodes=TRUE)         
+  
+}
+ 
+
+# XML-Parsing-for-Google-USPTO-patent-files-using-R
+
+filenames<-readLines('C:/Users/agn23/Desktop/actual_path.txt')
+
+setwd('C:/Users/agn23/Downloads/Patent Data/Patent bibliography/2015') 
+
+library(XML)
+
+​
+
+lines   <- readLines(paste(filenames[1],".xml",sep="")) 
+
+​
+
+start   <- grep('<?xml version="1.0" encoding="UTF-8"?>',lines,fixed=T) 
+
+end     <- c(start[-1]-1,length(lines))                                 
+
+checkorgname <- grep('<assignees>', lines, fixed=T)                     
+
+​
+
+​
+
+​
+
+data<-data.frame(start, end)
+
+​
+
+num=c();
+
+for(i in 1:length(checkorgname)){                                           
+
+  for(j in 1:length(start)){                                           
+
+    if(checkorgname[i]>start[j] && checkorgname[i]<end[j]){     
+
+      num=append(num, j)                                  
+
+    }                                                         
+
+  }
+
+}
+
+​
+
+​
+
+get.xml <- function(i) {                                       
+
+docs <- lapply(num,get.xml)   
+
+theList<-sapply(docs,function(doc) xmlValue(doc["//assignees"][[1]]))                
+inventionTitle<-sapply(docs,function(doc) xmlValue(doc["//invention-title"][[1]]))  
+docno<-sapply(docs,function(doc) xmlValue(doc["//doc-number"][[1]]))                 
+
